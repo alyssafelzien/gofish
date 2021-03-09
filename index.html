@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head> 
+    <title> gofish </title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<body>
+    <div id="title">go fish</div>
+    <div class="scoreboard">
+        <div id="scores">Score: </div>
+        <div id="user">You: </div>
+        <div id="userscore">0</div>
+        <br>
+        <div id="comp">Computer: </div>
+        <div id="compscore">0</div>
+    </div>
+    <div class="play">
+        <div class="hand"></div>
+    </div>
+    <div id="dialogue"></div>
+    <div class="input">
+        <button id="start" onclick="startGame()">start</button>
+        <button id="gofishbutton" onclick="gofish()">go fish</button>
+        <button id="add" onclick="add()">Add to Deck</button>
+        <button id="restart" onclick="restart()">restart</button>
+    </div>
+x</body>
+
+<script>
+    //add fuctionality later from solidity
+    var cards = ["AD", "2D","3D","4D","5D","7D","8D","9D","10D","JD","QD","KD",
+                 "AS", "2S","3S","4S","5S","7S","8S","9S","10S","JS","QS","KS",
+                 "AH", "2H","3H","4H","5H","7H","8H","9H","10H","JH","QH","KH",
+                 "AC", "2C","3C/","4C","5C","7C","8C","9C","10C","JC","QC","KC"];
+
+     function startGame(){
+        document.getElementById("dialogue").innerHTML = "Game Started.";
+    }
+
+    function gofish(){
+        document.getElementById("dialogue").innerHTML = "Go Fish.";
+    }
+
+    function restart(){
+        document.getElementById("dialogue").innerHTML = "Game Cleared.";
+    }
+    function add(){
+        document.getElementById("dialogue").innerHTML = "Card added to deck.";
+    }
+</script>
+
+</html>

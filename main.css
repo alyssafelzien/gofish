@@ -1,0 +1,83 @@
+@font-face{
+    font-family: 'myFont';
+    src: url('/Pixeboy-font.ttf');
+}
+
+body {
+    background-color: #142253;
+    background-image: url('/ocean.png');
+    background-repeat: no-repeat;
+    margin-left: 100pt;
+    margin-right: 100pt;
+    font-family: 'myFont';
+}
+
+h1{
+    text-align: center;
+}
+
+.hand{
+    padding: 20pt;
+}
+
+#title{
+    color: #779ec4;
+    font-size: 75px;
+    height: 50px;
+    margin-top: 20px;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: #090c20;
+}
+
+#start, #gofishbutton, #add, #restart{
+    margin: 20px 20px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-family: 'myFont';
+    background-color: #5b3560;
+}
+
+.scoreboard {
+    background-color: #779ec4;
+    width: 110px;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+#scores{
+    text-align: center;
+}
+
+#userscore, #user, #compscore, #comp{
+    display: inline;
+}
+
+#userscore{
+    margin-right: 0px;
+    margin-left: 67px;
+}
+
+#compscore{
+    margin-left: 30px;
+}
+
+#title{
+    margin-left: 230px;
+}
+
+.input{
+    margin-left: 130px;
+}
+
+.play{
+    height: 200px;
+}
+
+#dialogue{
+    color: #779ec4;
+     width: 140px;
+    text-align: center;
+    margin-left: 290px;
+}
