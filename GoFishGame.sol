@@ -4,7 +4,7 @@ import "./DeckOfCards.sol";
 import "./Card.sol";
 
 contract GoFishGame {
-  //TODO
+    //TODO
     // Figure out random
     // Get base classes set up 
     // Put some functionality in DeckOfCards?
@@ -19,8 +19,12 @@ contract GoFishGame {
   
   uint numPlayerPairs public; //TODO maybe make it a dictionary? Could make it so other people can join in?
   uint numComputerPairs public;
-
   
+  //Playerhand needs
+    // Check if pairs - check
+    // add card
+    // remove card
+    // 
   constructor() public {
       startNumber = 5;
       numPlayerPairs = 0;
@@ -31,6 +35,14 @@ contract GoFishGame {
          // TODO figure out random generator stuff  uint card =  https://github.com/randao/randao 
       }
   }
+  
+  function startGame() public {
+     //TODO put logic 
+  }
+  
+  //Add card to the deck
+  
+  //Remove from deck
   
   function playComputer() private {
     if(!gameOver()) {
