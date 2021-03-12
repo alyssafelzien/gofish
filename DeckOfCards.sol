@@ -1,16 +1,7 @@
 pragma solidity 0.5.1;
 pragma experimental ABIEncoderV2;
-import "./DeckOfCards.sol";
-contract PlayerHand {
 
-    string value;
-    // string public card;
-    string[] private ranks;
-    Card[] public hand;
-    Card[] public removedCards;
-    string[] suits;
-    Card public playerCard;
-    
+contract DeckOfCards {
     
     struct Card {
         uint _id;
@@ -19,51 +10,71 @@ contract PlayerHand {
         // string _toString;
     }
     
-    function add(Card memory c) public {
-        hand.push(c);
-    }
+    string value;
+    // string public card;
+    string[] private ranks;
+    Card[] public deck;
+    string[] suits;
+    Card public card;
+    uint256 public deckLength;
     
-    // this should return an array of cards 
-    function removeCardsOfRank(string memory s) public returns (Card[] memory){
-        delete removedCards;
-        uint foundCards = 0;
-        for(uint j = 0; j < hand.length; j++) {
-            // Card memory c = hand[j];
-            // Compare bytes of strings
-            if(keccak256(bytes(hand[j]._rank)) == keccak256(bytes(s))) {
-            // if(c._rank == s) {
-                foundCards += 1;
-                // at the end we will pop 'foundCards' many cards into a cardArray for placing into other players hand
-                Card memory temp = hand[hand.length-foundCards];
-                hand[hand.length-foundCards] = hand[j];
-                hand[j] = temp;
-            }
-        }
-        //if there are 2 found cards, should only pop the last 2 elements
-        while(foundCards >= 0) {
-            // Card memory popped = hand[hand.length];
-            removedCards.push(hand[hand.length-1]);
-            hand.pop();
-            foundCards -= 1;
-        }
-        // whatever uses this must check if removedCards is empty. 
-        return removedCards;
+    // pseudorandom should be ok
+    function random() public view returns (uint8) {
+        return uint8(uint256(block.timestamp)%(deck.length));
+    }
+
+    function addCard(uint _id, string memory _rank, string memory _suit) public {
+        card = Card(_id, _rank, _suit);
+        deck.push(card);
     }
     
     function checkIfEmpty() public view returns (bool) {
-        if(hand.length == 0) {
+        if(deck.length == 0) {
             return true;
         } else  {
             return false;
         }
     }
     
+    //you'd do something like hand.addCard(deck.pullCard())
+    function pullCard() public returns (Card memory) {
+        if(deck.length != 0) {
+            deck.pop();
+            // return deck[deck.length-1];
+            //update deckLength to see how many are left
+            deckLength = deck.length;
+            return deck[random()];
+        } 
+    }
     
-    // pullOutAndAddToHand()
-    // hand.add(deck.pull())
+    constructor() public {
+        buildDeck();
+    }
     
     
-    function clearHand() public {
-        delete hand;
+    // function firstCard() public returns(string memory) {
+    //     string memory x = deck[deck.length];
+    //     delete deck[deck.length];
+    //     return x;
+    // }
+    function buildDeck() public {
+        suits = ['H', 'C', 'D', 'S'];
+        ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
+        //build deck
+        uint256 i;
+        uint256 j;
+        for(i = 0; i < suits.length; i++) {
+            for(j = 0; j < ranks.length; j++) {
+                
+                addCard(i+j, ranks[j], suits[i]);
+            }
+        }
+    }
+    
+    //pullOutAndAddToHand()
+    
+    
+    function clearDeck() public {
+        delete deck;
     }
 }
