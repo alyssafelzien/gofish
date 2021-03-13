@@ -19,8 +19,6 @@ contract GoFishGame {
     
   uint8 public numPlayerPairs;
   uint8 public numComputerPairs;
-  
-  uint8 constant startNumberCards = 5;
     
   constructor() public {
       startGame();
@@ -38,7 +36,7 @@ contract GoFishGame {
       
       // set up deck and give cards to player and computer
       deckOfCards = new DeckOfCards();
-      for(int i = 0; i < startNumberCards; i++) {
+      for(int i = 0; i < 5; i++) {
         playerCards.push(deckOfCards.pullCard());
         computerCards.push(deckOfCards.pullCard());
       }
@@ -122,10 +120,11 @@ contract GoFishGame {
           for(uint8 j = i+1; j < playerCards.length; j++) {
               if(playerCards[i].rank == playerCards[j].rank) {
                   //found a pair!
+                  uint8 foundRank = playerCards[i].rank;
                   numPlayerPairs ++;
                   foundPair = true;
-                  DeckOfCards.Card memory firstCard = removeCardFromPlayer(i);
-                  int8 newIndexToRemove = playerHandContainsRank(firstCard.rank);
+                  removeCardFromPlayer(uint8(i));
+                  int8 newIndexToRemove = playerHandContainsRank(foundRank);
                   if(newIndexToRemove >= 0) {
                     removeCardFromPlayer(uint8(newIndexToRemove));
                     numPlayerCards = numPlayerCards - 2;
@@ -148,10 +147,11 @@ contract GoFishGame {
           for(uint8 j = i+1; j < computerCards.length; j++) {
               if(computerCards[i].rank == computerCards[j].rank) {
                   //found a pair!
+                  uint8 foundRank = computerCards[i].rank;
                   numComputerPairs ++;
                   foundPair = true;
-                  DeckOfCards.Card memory firstCard = removeCardFromComputer(i);
-                  int8 newIndexToRemove = computerHandContainsRank(firstCard.rank);
+                  removeCardFromComputer(uint8(i));
+                  int8 newIndexToRemove = computerHandContainsRank(foundRank);
                   if(newIndexToRemove >= 0) {
                     removeCardFromComputer(uint8(newIndexToRemove));
                     numComputerCards = numComputerCards - 2;
