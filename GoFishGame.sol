@@ -1,133 +1,240 @@
 pragma solidity 0.5.1;
+pragma experimental ABIEncoderV2;
 
 import "./DeckOfCards.sol";
-import "./Card.sol";
 
 contract GoFishGame {
-    //TODO
-    // Figure out random
-    // Get base classes set up 
-    // Put some functionality in DeckOfCards?
   
+  enum Winner { PLAYER, COMPUTER, TIE, IN_PROGRESS }
+    
+  DeckOfCards public deckOfCards;
+  DeckOfCards.Card[]  public playerCards;
+  DeckOfCards.Card[] public computerCards;
+  uint8 public numPlayerCards;
+  uint8 public numComputerCards;
   
-  DeckOfCards cards private;
-  uint startNumber = 5 private;
-  Card playerCards [] public;
-  Card computerCards [] private;
-  address winner;
-  bool gameOver;
+  Winner public winner;
+  bool public gameIsOver;
+  bool public isPlayerTurn;
+    
+  uint8 public numPlayerPairs;
+  uint8 public numComputerPairs;
   
-  uint numPlayerPairs public; //TODO maybe make it a dictionary? Could make it so other people can join in?
-  uint numComputerPairs public;
-  
-  //Playerhand needs
-    // Check if pairs - check
-    // add card
-    // remove card
-    // 
+  uint8 constant startNumberCards = 5;
+    
   constructor() public {
-      startNumber = 5;
+      startGame();
+  }
+  
+  /**
+   * Starts a fresh, new game
+   */ 
+  function startGame() public {
       numPlayerPairs = 0;
       numComputerPairs = 0;
-      gameOver = false;
-      winner = 0; // set to some default value
-      while(playerCards.length < startNumber && computerCards.length < startNumber ) {
-         // TODO figure out random generator stuff  uint card =  https://github.com/randao/randao 
+      gameIsOver = false;
+      isPlayerTurn = true;
+      winner = Winner.IN_PROGRESS;
+      
+      // set up deck and give cards to player and computer
+      deckOfCards = new DeckOfCards();
+      for(int i = 0; i < startNumberCards; i++) {
+        playerCards.push(deckOfCards.pullCard());
+        computerCards.push(deckOfCards.pullCard());
       }
+      numPlayerCards = 5;
+      numComputerCards = 5;
+      gameOver();
   }
-  
-  function startGame() public {
-     //TODO put logic 
-  }
-  
-  //Add card to the deck
-  
-  //Remove from deck
-  
-  function playComputer() private {
-    if(!gameOver()) {
+ 
+ 
+   /**
+   * Takes a random card from its hand and takes one with the same rank from the player.
+   * If the player doesn't have a matching card, takes a card from the deck.
+   */
+   function playComputer() public {
+    if(!gameOver() && !isPlayerTurn) {
+      isPlayerTurn = true;
       // randomly pick a card in hand
-      
-      // as player if they have the card
-      
-      // if yes  
-            // take card and add it to deck. 
-            
-        // else
-            Grab card from deck
-            
-    //Check for pairs
-    containsPair()
-    //player's turn
-    gameOver();
-    }
-    else {
-        //print game is over or something
-    }
-    
-  }
-  
-  function play(Card card) public {
-    if(!gameOver()) {
-          // check if card is in there hand
-          
-          // if yes
-            // check if computer has the card
-                // yes - grab card from computer  
-            
-            // else
-                // take from deck
-            // check for pairs
-            // computer's turn
-        // else
-            // print message saying invalid card
-        containsPair()
-        gameOver()
-    else {
-        // print game is over or something
+      uint8 index = randomComputerCard();
+      DeckOfCards.Card memory card = computerCards[index];
+      int cardIndex = playerHandContainsRank(card.rank);
+      if(cardIndex >= 0) {
+          DeckOfCards.Card memory newCard = removeCardFromPlayer(uint8(cardIndex));
+          computerCards.push(newCard);
+          numPlayerCards--;
+      }
+      else if(!deckOfCards.isEmpty()) { //go fishing
+         DeckOfCards.Card memory newCard = deckOfCards.pullCard();
+         if(newCard.rank == card.rank) { //the computer got what it wanted! 
+              isPlayerTurn = false;
+          }
+          computerCards.push(newCard);
+      }
+      numComputerCards++;
+      gameOver(); //check if game is over
     }
   }
   
-  function drawCardFromDeck() {
-      // determine what card is left,
-      // return a random new card
+  /**
+   * Given a card from the player deck, takes a card with the same rank from the computer. 
+   * If the computer doesn't have a match, takes a card from the deck.
+   */
+  function play(DeckOfCards.Card memory _card ) public 
+  {
+     if(!gameOver() && isPlayerTurn) {
+      // randomly pick a card in hand
+      isPlayerTurn = false;
+      int cardIndex = computerHandContainsRank(_card.rank);
+      if(cardIndex >= 0) {
+          DeckOfCards.Card memory newCard = removeCardFromComputer(uint8(cardIndex));
+          playerCards.push(newCard);
+          numComputerCards--;
+      }
+      else if(!deckOfCards.isEmpty()) { //go fishing
+          DeckOfCards.Card memory newCard = deckOfCards.pullCard();
+          if(newCard.rank == _card.rank) { //you got what you wanted! 
+              isPlayerTurn = true;
+          }
+          playerCards.push(newCard);
+      }
+      numPlayerCards++;
+      gameOver(); //check if game is over
+    }
+  }
+ 
+  
+  /**
+   *  Returns a random card index in the computer's hand 
+   */
+  function randomComputerCard() public view returns (uint8)  {
+    return uint8(uint256(block.timestamp)%(computerCards.length));    
   }
   
-  function containsPair(Cards[] _cards) {
+  
+  /**
+   *  Checks the player hand for pairs
+   */
+  function playerHandFindPair() public {
       // look through deck to see if has a pair/s
-      for(int i = 0; i < cards.size; i++) {
-          for(int j = l; j < cards.size; j++) {
-              if( cards[i] == cards[j]) {
+      bool foundPair = false;
+      for(uint8 i = 0; i < playerCards.length; i++) {
+          for(uint8 j = i+1; j < playerCards.length; j++) {
+              if(playerCards[i].rank == playerCards[j].rank) {
                   //found a pair!
-                  if(msg.address == playerAddress) {
-                      numPlayerPairs ++;
+                  numPlayerPairs ++;
+                  foundPair = true;
+                  DeckOfCards.Card memory firstCard = removeCardFromPlayer(i);
+                  int8 newIndexToRemove = playerHandContainsRank(firstCard.rank);
+                  if(newIndexToRemove >= 0) {
+                    removeCardFromPlayer(uint8(newIndexToRemove));
+                    numPlayerCards = numPlayerCards - 2;
                   }
-                  else {
-                      numComputerPairs++;
-                  }
-                  cards.remove[i];
-                  cards.remove[j];
-                  i = -1;
-                  j = 0; //start search over, must be a better way right?
               }
           }
       }
+      if(foundPair) {
+          playerHandFindPair(); // search to see if any other pairs
+      }
+  }
+  
+  /**
+   * Checks the computer hand for pairs
+   */ 
+  function computerHandFindPair() public {
+      // look through deck to see if has a pair/s
+      bool foundPair = false;
+      for(uint8 i = 0; i < computerCards.length; i++) {
+          for(uint8 j = i+1; j < computerCards.length; j++) {
+              if(computerCards[i].rank == computerCards[j].rank) {
+                  //found a pair!
+                  numComputerPairs ++;
+                  foundPair = true;
+                  DeckOfCards.Card memory firstCard = removeCardFromComputer(i);
+                  int8 newIndexToRemove = computerHandContainsRank(firstCard.rank);
+                  if(newIndexToRemove >= 0) {
+                    removeCardFromComputer(uint8(newIndexToRemove));
+                    numComputerCards = numComputerCards - 2;
+                  } 
+              }
+          }
+      }
+      if(foundPair) {
+          computerHandFindPair(); // search to see if any other pairs
+      }
   }
 
-
-function gameOver(Card card) {
-      if(numPlayerPairs == 5) {
+/**
+ *  Checks for pairs in the player and computer hand and checks if either has reached 5 or more pairs
+ */ 
+function gameOver() public returns (bool){
+     computerHandFindPair();
+     playerHandFindPair();
+     if(numPlayerPairs >= 5 && numPlayerPairs > numComputerPairs) {
           // player won!
-          winner = msg.address;
-          gameOver = true;
+          winner = Winner.PLAYER;
+          gameIsOver = true;
       }
-      else if(numComputerPairs == 5{
-          winner = computer.address //not sure what to do here really
-          gameOver = true;
+      else if(numComputerPairs >= 5 && numComputerPairs > numPlayerPairs) {
+          winner = Winner.COMPUTER;
+          gameIsOver = true;
+      }
+      else if(numPlayerPairs >= 5 && numComputerPairs == numPlayerPairs) { // then it's a tie!
+          winner = Winner.TIE;
+          gameIsOver = true;
       }
       else {
-
+          gameIsOver = false;
       }
+      return gameIsOver;
+  }
+  
+  /**
+   * Given an index, removes a card from the player's hand
+   */ 
+  function removeCardFromPlayer(uint8 _index) private returns (DeckOfCards.Card memory) {
+     DeckOfCards.Card memory card = playerCards[_index];
+     playerCards[_index] = playerCards[playerCards.length - 1];
+     playerCards.pop();
+     return card;
+  }
+  
+   /**
+   * Given an index, removes a card from the computer's hand
+   */ 
+  function removeCardFromComputer(uint8 _index) private returns (DeckOfCards.Card memory) {
+     DeckOfCards.Card memory card = computerCards[_index];
+     computerCards[_index] = computerCards[computerCards.length - 1];
+     computerCards.pop();
+     return card;
+  }
+  
+   /**
+   * Returns index of card or negative one if it's not there.  
+   */
+  function playerHandContainsRank(uint8 _rank) private view returns (int8) {
+       int8 _indexOfCard = -1;
+       for(uint8 i = 0; i < playerCards.length; i++) {
+           DeckOfCards.Card memory c  = playerCards[i];
+           if(c.rank == _rank) {
+                _indexOfCard = int8(i);    
+           }
+      }
+      return _indexOfCard;
+  }
+  
+  /**
+   * Returns index of card or negative one if it's not there.  
+   */
+  function computerHandContainsRank(uint8 _rank) private view returns (int8) {
+       int8 indexOfCard = -1;
+       for(uint8 i = 0; i < computerCards.length; i++) {
+           DeckOfCards.Card memory c = computerCards[i];
+           if(c.rank == _rank) {
+                indexOfCard = int8(i);    
+           }
+      }
+      return indexOfCard;
   }
 
 }
