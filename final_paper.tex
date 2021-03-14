@@ -1,31 +1,49 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{multicol}
 
 \title{gofish}
 \author{Aubrey Spannagel, Jordan Hiatt, Alyssa Felzien }
 \date{March 2021}
 
 \begin{document}
-
 \maketitle
-
+\begin{multicols}{2}
+[
 \section{Introduction}
+]
 1. Introduce the project, what it does (plays a GoFishGame), how we came up with idea (wanted to make a game in Solidity) 
 2. (Could talk more about Remix, Solidity, how those two tie together <- if we need more info)
 
+\end{multicols}
+\begin{multicols}{2}
+[
 \section{DeckOfCards} (Jordan)
+]
 1. Go into set up of all of that
 2. Concept of gas, memory and storage
+\end{multicols}
 
-\section{GoFishGame} (Alyssa)
-1. Using another smart contract in a contract
-2. pseudoRandom (Alyssa)
+\begin{multicols}{2}
+[
+\section{GoFishGame}
+]
+In the GoFishGame project we created two smart contracts, DeckOfCards.sol and GoFishGame.sol. DeckOfCards.sol provided us with the methods and variables to easily interact with a DeckOfCards inside GoFishGame. In Solidity, you can use a smart contract within another smart contract by using the import command. For example, \begin{verbatim} import "./DeckOfCards.sol"; \end{verbatim} Like in other object oriented programming languages, this makes it easier to organize code and build complex systems.
+In addition to using smart contracts, we also needed to have random numbers in our project to shuffle the deck and to allow the computer to play. Unfortunately, Solidity can not create random numbers. Calculations for pseudo random numbers cost too much so basic solutions are used.  
 
+\end{multicols}
+\begin{multicols}{2} [
 \section{Attaching to UI} (Aubrey)
+]
+\end{multicols}
 
+\begin{multicols}{2} [
 \section{Conclusion}
+]
 1. Final thoughts, end results, 
+\end{multicols}
+
 
 \section{References} 
-
+https://www.sitepoint.com/solidity-pitfalls-random-number-generation-for-ethereum 
 \end{document}
