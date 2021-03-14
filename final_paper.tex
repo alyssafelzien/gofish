@@ -12,10 +12,21 @@
 [
 \section{Introduction}
 ]
-1. Introduce the project, what it does (plays a GoFishGame), how we came up with idea (wanted to make a game in Solidity) 
-2. (Could talk more about Remix, Solidity, how those two tie together <- if we need more info)
+Our project was to create a Go Fish game using the programming language Solidity, the Remix IDE, and a GUI made with HTML and CSS. We decided to make Go Fish because it had simple game logic and would allow us to learn more about Solidity and Remix. This paper will describe what Solidity and Remix are, how we used them in our project, unique problems with smart contracts, and our final results. 
+\end{multicols}
 
 \end{multicols}
+\begin{multicols}{2}
+[
+\section{Remix and Solidity}
+]
+
+Remix is an open source web and desktop IDE that has access to many plugins and allows for fast development. It is used to for smart contract development and allows users to compile and deploy their contracts into 3 different environments, JavaScript VM, Injected Provider, and Web3 Provder. For our project we used the browser version and deployed to the JavaScript VM environment for testing and to the Web3 Provider for our GUI.
+
+Solidity is a an object-oriented language that is statically typed and supports inheritance, libraries, and complex user-defined types. It is used to implement smart contracts. Smart contracts are similar to microservices on the web, and anyone can use them. These programs 
+
+\end{multicols}
+
 \begin{multicols}{2}
 [
 \section{DeckOfCards} (Jordan)
@@ -35,6 +46,7 @@ In addition to using smart contracts, we also needed to have random numbers in o
 \begin{multicols}{2} [
 \section{Attaching to UI} (Aubrey)
 ]
+In order to connect the Smart Contract to the Ethereum IDE, we had to start with an HTML and CSS base. Ethereum includes a Web3.js extention that allows the connection between the IDE and a local node.To do this, we had to install geth, a program that allows an Ethereum node to be ran locally. After creating and running the node, we needed to add the contract credentials to the HTML file. Thankfully, Remix was helpful enough to supply the JavaScipt code with the credentials already filled in; this made connecting to the Blockchain simple.  
 \end{multicols}
 
 \begin{multicols}{2} [
@@ -46,4 +58,14 @@ In addition to using smart contracts, we also needed to have random numbers in o
 
 \section{References} 
 https://www.sitepoint.com/solidity-pitfalls-random-number-generation-for-ethereum 
+
+(format later-Aubrey)
+https://www.youtube.com/watch?v=hcTPjpPvas8 
+https://livecodestream.dev/post/interacting-with-smart-contracts-from-web-apps/
+https://metamask.zendesk.com/hc/en-us/articles/360028141672-How-to-deposit-receive-tokens-to-your-MetaMask-Wallet
+
+https://ethereum.org/en/developers/docs/smart-contracts/deploying/ 
+
+https://docs.soliditylang.org/en/v0.8.2/
+https://remix-ide.readthedocs.io/en/latest/
 \end{document}
